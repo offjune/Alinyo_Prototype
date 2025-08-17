@@ -1,7 +1,7 @@
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-from prompts import SYSTEM_INSTRUCTION, START_QUESTIONS
+from .prompts import SYSTEM_INSTRUCTION, START_QUESTIONS
 
 load_dotenv()
 

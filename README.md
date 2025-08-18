@@ -1,7 +1,5 @@
 # Alinyo - Assistente de Bem-Estar com IA
 
-![Interface do Chat Alinyo](https://raw.githubusercontent.com/offjune/Alinyo_Prototype/screenshot.jpg)
-
 Alinyo é uma aplicação web full-stack que funciona como um assistente de bem-estar e coach de rotina. Utilizando o poder dos LLMs (Large Language Models), o Alinyo conversa com o utilizador para entender as suas necessidades e criar rotinas personalizadas que equilibram a saúde física e mental.
 
 Este projeto foi construído como um estudo prático de desenvolvimento web com Python e Django, integração com APIs de IA e criação de uma experiência de utilizador interativa e persistente.

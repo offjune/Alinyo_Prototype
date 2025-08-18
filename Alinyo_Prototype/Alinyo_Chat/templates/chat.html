@@ -41,7 +41,8 @@
     </div>
 
     <script>
-        const newSessionIdFromDjango = "{{ uuid|safe }}";
+        const newSessionIdFromDjango = "{{ uuid }}";
+        const startQuestionsFromDjango = `{{ start_questions|safe }}`;
 
         const chatBox = document.getElementById('chat-box');
         const chatForm = document.getElementById('chat-form');
@@ -58,18 +59,24 @@
             event.preventDefault();
             const userMessage = userInput.value.trim();
             if (userMessage) {
-                addMessage(userMessage, 'user');
+                addMessage(userMessage, 'user', false);
                 userInput.value = '';
                 showTypingIndicator();
                 sendMessageToApi(userMessage);
             }
         });
 
-        function addMessage(message, sender) {
+        function addMessage(message, sender, isHtml = true) {
             const className = sender === 'user' ? 'user-message' : 'bot-message';
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', className);
-            messageElement.textContent = message;
+            
+            if (isHtml) {
+                messageElement.innerHTML = message;
+            } else {
+                messageElement.textContent = message;
+            }
+            
             chatBox.appendChild(messageElement);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
@@ -112,10 +119,16 @@
         function loadHistoryAndSession() {
             let sessionId = localStorage.getItem('session_id');
 
-            if (!sessionId) {
+            if (!sessionId || sessionId === "undefined" || sessionId === "") {
                 sessionId = newSessionIdFromDjango;
+
+                if (!sessionId || sessionId === "undefined" || sessionId === "") {
+                    console.log("ID do Django vazio. Gerando um novo ID no cliente.");
+                    sessionId = generateUUID();
+                }
+                
                 localStorage.setItem('session_id', sessionId);
-                addMessage("Olá! Como posso te ajudar hoje?", 'bot');
+                addMessage(startQuestionsFromDjango, 'bot', true);
             } else {
                 fetch(`${historyApiUrl}?session_id=${sessionId}`)
                     .then(response => response.json())
@@ -130,6 +143,12 @@
                         addMessage("Não foi possível carregar o histórico da conversa.", 'bot');
                     });
             }
+        }
+
+        function generateUUID() {
+            return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+            );
         }
 
         function getCookie(name) {

@@ -24,8 +24,7 @@ class Chatbot:
 
         self.chat = self.model.start_chat(history=[])
         initial_greeting = START_QUESTIONS
-
-        print(f"\n {initial_greeting}")
+        self.chat.send_message(initial_greeting)
 
     def get_response(self, user_message):
         try:

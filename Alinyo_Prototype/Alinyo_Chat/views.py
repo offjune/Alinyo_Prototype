@@ -1,11 +1,13 @@
-from multiprocessing import context
+import json
+import uuid
+import markdown
 from django.shortcuts import render
-from httplib2 import Response
+from django.views import View
+from django.http import JsonResponse
+from django.utils.html import linebreaks
 from .models import Messages
 from .services import Chatbot
-from django.views import View
-import json
-from django.http import JsonResponse
+from .prompts import START_QUESTIONS
 
 class ChatApi(View):
     def __init__(self):
@@ -21,7 +23,11 @@ class ChatApi(View):
         return JsonResponse({"message": response})
 
 def chat(request):
-    return render(request, "chat.html")
+    context = {
+        'uuid': str(uuid.uuid4()),
+        'start_questions': linebreaks(markdown.markdown(START_QUESTIONS))
+    }
+    return render(request, "chat.html", context)
 
 def get_history(request):
     session_id = request.GET.get("session_id")
